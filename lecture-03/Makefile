@@ -6,10 +6,12 @@ else
 endif
 
 .PHONY: all
-all: execve-example
+all: atexit-example execve-example
+
+atexit-example: atexit-example.o
 
 execve-example: execve-example.o
 
 .PHONY: clean
 clean:
-	rm -f execve-example.o execve-example
+	rm -f atexit-example.o atexit-example execve-example.o execve-example
