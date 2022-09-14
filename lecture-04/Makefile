@@ -6,10 +6,13 @@ else
 endif
 
 .PHONY: all
-all: fork-example
+all: fork-example multiple-fork-example
 
 fork-example: fork-example.o
+
+multiple-fork-example: multiple-fork-example.o
 
 .PHONY: clean
 clean:
 	rm -f fork-example.o fork-example
+	rm -f multiple-fork-example.o multiple-fork-example
