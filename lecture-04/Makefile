@@ -1,4 +1,4 @@
-CFLAGS = -std=c17 -Wpedantic -Wall -O2 -pipe -fno-plt -fPIC
+CFLAGS = -std=c17 -Wpedantic -Wall -O2 -pipe -fno-plt -fPIC -D _DEFAULT_SOURCE
 ifeq ($(shell uname -s),Darwin)
 	LDFLAGS =
 else

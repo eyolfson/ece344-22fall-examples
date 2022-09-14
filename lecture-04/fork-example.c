@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     printf("Parent returned pid: %d\n", pid);
     printf("Parent pid: %d\n", getpid());
     printf("Parent parent pid: %d\n", getppid());
-    usleep(100);
+    usleep(1000);
   }
   return 0;
 }
