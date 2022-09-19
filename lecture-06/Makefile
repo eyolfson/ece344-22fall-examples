@@ -7,7 +7,7 @@ endif
 
 .PHONY: all
 all: read-write-example open-example signal-example signal-example-2 \
-     wait-poll-example wait-interrupt-example
+     signal-close-example wait-poll-example wait-interrupt-example
 
 read-write-example: read-write-example.o
 
@@ -16,6 +16,8 @@ open-example: open-example.o
 signal-example: signal-example.o
 
 signal-example-2: signal-example-2.o
+
+signal-close-example: signal-close-example.o
 
 wait-poll-example: wait-poll-example.o
 
@@ -27,5 +29,6 @@ clean:
 	rm -f open-example.o open-example
 	rm -f signal-example.o signal-example
 	rm -f signal-example-2.o signal-example-2
+	rm -f signal-close-example.o signal-close-example
 	rm -f wait-poll-example.o wait-poll-example
 	rm -f wait-interrupt-example.o wait-interrupt-example
