@@ -6,7 +6,8 @@ else
 endif
 
 .PHONY: all
-all: create-fork create-pthread detached-error detached-fixed stack-size
+all: create-fork create-pthread detached-error detached-fixed stack-size \
+     multiple-thread-example
 
 create-fork: create-fork.o
 
@@ -18,6 +19,8 @@ detached-fixed: detached-fixed.o
 
 stack-size: stack-size.o
 
+multiple-thread-example: multiple-thread-example.o
+
 .PHONY: clean
 clean:
 	rm -f create-fork.o create-fork
@@ -25,3 +28,4 @@ clean:
 	rm -f detached-error.o detached-error
 	rm -f detached-fixed.o detached-fixed
 	rm -f stack-size.o stack-size
+	rm -f multiple-thread-example.o multiple-thread-example
