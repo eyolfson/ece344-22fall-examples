@@ -11,6 +11,7 @@
 #define TRANSFER_AMOUNT 100
 
 struct account {
+    uint64_t id;
     uint64_t balance;
 };
 
@@ -43,6 +44,7 @@ int main(int argc, char* argv[]) {
     assert(accounts != NULL);
 
     for (uint64_t i = 0; i < num_accounts; ++i) {
+        accounts[i].id = i + 1;
         accounts[i].balance = STARTING_BALANCE;
     }
     printf("Bank initial funds: $%'lu\n", STARTING_BALANCE * num_accounts);
