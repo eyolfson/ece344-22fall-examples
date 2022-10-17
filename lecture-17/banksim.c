@@ -2,13 +2,15 @@
 #include <errno.h>
 #include <limits.h>
 #include <locale.h>
+#include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define STARTING_BALANCE 1000
-#define NUM_TRANSFERS 500000000
+#define NUM_TRANSFERS 500000001
 #define TRANSFER_AMOUNT 100
+#define NUM_THREADS 8
 
 struct account {
     uint64_t id;
@@ -24,6 +26,29 @@ static void transfer(struct account* from, struct account* to, uint64_t amount) 
     }
     from->balance -= amount;
     to->balance += amount;
+}
+
+void* run(void* arg) {
+    uint32_t thread_id = *((uint32_t *) arg);
+    free(arg);
+
+    /* Calculate the number of transfers per thread
+       (handle if the global number of transfers isn't divisible) */
+    uint64_t num_transfers = NUM_TRANSFERS / NUM_THREADS;
+    if ((NUM_TRANSFERS % NUM_THREADS) > thread_id) {
+        ++num_transfers;
+    }
+
+    return NULL;
+}
+
+void check_error(int ret, const char* message) {
+    if (ret == 0) {
+        return;
+    }
+    errno = ret;
+    perror(message);
+    exit(ret);
 }
 
 int main(int argc, char* argv[]) {
@@ -48,6 +73,20 @@ int main(int argc, char* argv[]) {
         accounts[i].balance = STARTING_BALANCE;
     }
     printf("Bank initial funds: $%'lu\n", STARTING_BALANCE * num_accounts);
+
+    /*
+    pthread_t threads[NUM_THREADS];
+    for (uint32_t i = 0; i < NUM_THREADS; ++ i) {
+        int* thread_id = malloc(sizeof(uint32_t));
+        assert(thread_id != NULL);
+        *thread_id = i;
+        check_error(pthread_create(&threads[i], NULL, run, thread_id), "pthread_create");
+    }
+
+    for (uint32_t i = 0; i < NUM_THREADS; ++ i) {
+        check_error(pthread_join(threads[i], NULL), "pthread_join");
+    }
+    */
 
     /* Parallelize this for loop */
     for (uint64_t i = 0; i < NUM_TRANSFERS; ++i) {
