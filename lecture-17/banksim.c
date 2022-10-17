@@ -8,16 +8,16 @@
 #include <stdlib.h>
 
 #define STARTING_BALANCE 1000
-#define NUM_TRANSFERS 500000001
+#define NUM_TRANSFERS 500000000
 #define TRANSFER_AMOUNT 100
 #define NUM_THREADS 8
 
 struct account {
-    uint64_t id;
+    uint32_t id;
     uint64_t balance;
 };
 
-static uint64_t num_accounts = 0;
+static uint32_t num_accounts = 0;
 static struct account* accounts = NULL;
 
 static void transfer(struct account* from, struct account* to, uint64_t amount) {
@@ -32,12 +32,8 @@ void* run(void* arg) {
     uint32_t thread_id = *((uint32_t *) arg);
     free(arg);
 
-    /* Calculate the number of transfers per thread
-       (handle if the global number of transfers isn't divisible) */
+    /* Calculate the number of transfers per thread */
     uint64_t num_transfers = NUM_TRANSFERS / NUM_THREADS;
-    if ((NUM_TRANSFERS % NUM_THREADS) > thread_id) {
-        ++num_transfers;
-    }
 
     return NULL;
 }
@@ -61,7 +57,7 @@ int main(int argc, char* argv[]) {
     /* Get the number of accounts to simulate */
     errno = 0;
     num_accounts = strtoul(argv[1], NULL, 10);
-    assert(num_accounts != 0 && num_accounts != ULONG_MAX);
+    assert(num_accounts != 0);
     assert(errno == 0);
 
     size_t accounts_size = num_accounts * sizeof(struct account);
@@ -72,7 +68,7 @@ int main(int argc, char* argv[]) {
         accounts[i].id = i + 1;
         accounts[i].balance = STARTING_BALANCE;
     }
-    printf("Bank initial funds: $%'lu\n", STARTING_BALANCE * num_accounts);
+    printf("Bank initial funds: $%'lu\n", (uint64_t) STARTING_BALANCE * num_accounts);
 
     /*
     pthread_t threads[NUM_THREADS];
@@ -90,8 +86,8 @@ int main(int argc, char* argv[]) {
 
     /* Parallelize this for loop */
     for (uint64_t i = 0; i < NUM_TRANSFERS; ++i) {
-        uint64_t from_index = random() % num_accounts;
-        uint64_t to_index = random() % num_accounts;
+        uint64_t from_index = rand() % num_accounts;
+        uint64_t to_index = rand() % num_accounts;
         transfer(&accounts[from_index], &accounts[to_index], TRANSFER_AMOUNT);
     }
 
