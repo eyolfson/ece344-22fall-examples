@@ -32,9 +32,6 @@ void* run(void* arg) {
     uint32_t thread_id = *((uint32_t *) arg);
     free(arg);
 
-    /* Calculate the number of transfers per thread */
-    uint64_t num_transfers = NUM_TRANSFERS / NUM_THREADS;
-
     return NULL;
 }
 
