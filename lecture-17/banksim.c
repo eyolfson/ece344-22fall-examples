@@ -49,6 +49,7 @@ int main(int argc, char* argv[]) {
     }
     printf("Bank initial funds: $%'lu\n", STARTING_BALANCE * num_accounts);
 
+    /* Parallelize this for loop */
     for (uint64_t i = 0; i < NUM_TRANSFERS; ++i) {
         uint64_t from_index = random() % num_accounts;
         uint64_t to_index = random() % num_accounts;
