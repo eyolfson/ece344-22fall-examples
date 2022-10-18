@@ -85,6 +85,8 @@ int main(int argc, char* argv[]) {
     accounts = malloc(accounts_size);
     assert(accounts != NULL);
 
+    printf("Memory Used: %lu MiB\n", accounts_size / (1024 * 1024));
+
     for (uint64_t i = 0; i < num_accounts; ++i) {
         accounts[i].id = i + 1;
         accounts[i].balance = STARTING_BALANCE;
