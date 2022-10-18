@@ -6,10 +6,10 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define STARTING_BALANCE 1000
-#define NUM_TRANSFERS 500000000
-#define TRANSFER_AMOUNT 100
+#define NUM_TRANSFERS 10000000
 #define NUM_THREADS 8
 
 struct account {
@@ -20,15 +20,39 @@ struct account {
 static uint32_t num_accounts = 0;
 static struct account* accounts = NULL;
 
-static void transfer(struct account* from, struct account* to, uint64_t amount) {
-    if (from->balance < amount) {
-        return;
+static void securely_connect_to_bank() {
+    const int64_t nsec_per_sec = 1000000000;
+
+    /* Calculate the target time to wait until base on the current time */
+    struct timespec target;
+    clock_gettime(CLOCK_MONOTONIC, &target);
+    target.tv_nsec += 1000;
+    if (target.tv_nsec >= nsec_per_sec) {
+        target.tv_nsec -= nsec_per_sec;
+        target.tv_sec += 1;
     }
+
+    /* Busy loop that keeps on reading the time */
+    struct timespec current;
+    while (1) {
+        clock_gettime(CLOCK_MONOTONIC, &current);
+        if (current.tv_sec > target.tv_sec) {
+            break;
+        }
+        else if (current.tv_nsec >= target.tv_nsec) {
+            break;
+        }
+    }
+}
+
+static void transfer(struct account* from, struct account* to) {
+    securely_connect_to_bank();
+    uint64_t amount = from->balance / 10;
     from->balance -= amount;
     to->balance += amount;
 }
 
-void* run(void* arg) {
+static void* run(void* arg) {
     uint32_t thread_id = *((uint32_t *) arg);
     free(arg);
 
@@ -85,7 +109,7 @@ int main(int argc, char* argv[]) {
     for (uint64_t i = 0; i < NUM_TRANSFERS; ++i) {
         uint64_t from_index = rand() % num_accounts;
         uint64_t to_index = rand() % num_accounts;
-        transfer(&accounts[from_index], &accounts[to_index], TRANSFER_AMOUNT);
+        transfer(&accounts[from_index], &accounts[to_index]);
     }
 
     uint64_t total_balance = 0;
