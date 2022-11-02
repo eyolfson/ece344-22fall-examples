@@ -41,6 +41,7 @@ static uint64_t mmu(uint64_t virtual_address) {
 
         uint64_t pte = page_table[index];
         if (!(pte & PTE_VALID)) {
+            printf("0x%lX: page fault\n", va);
             return 0;
         }
 
@@ -49,9 +50,11 @@ static uint64_t mmu(uint64_t virtual_address) {
             continue;
         }
 
-        return ((pte & ~0x3FF) << 2) | (va & 0xFFF);
+        uint64_t pa = ((pte & ~0x3FF) << 2) | (va & 0xFFF);
+        printf("0x%lX: 0x%lX\n", va, pa);
+        return pa;
     }
-    return 0;
+    __builtin_unreachable();
 }
 
 
@@ -78,8 +81,7 @@ int main() {
 
     l0_page_table[188] = pte_from_ppn(0xCAFE);
 
-    uint64_t va1 = 0xABCDEF;
-    printf("0x%lX -> 0x%lX\n", va1, mmu(va1));
+    mmu(0xABCDEF);
 
     deallocate_page_table(root_page_table);
     root_page_table = NULL;
