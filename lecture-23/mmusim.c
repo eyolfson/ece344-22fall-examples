@@ -71,15 +71,17 @@ uint64_t pte_from_page_table(uint64_t* page_table) {
 int main() {
     assert(sysconf(_SC_PAGE_SIZE) == PAGE_SIZE);
 
-    root_page_table = allocate_page_table();
+    uint64_t* l2_page_table_1 = allocate_page_table();
 
-    uint64_t* l1_page_table = allocate_page_table();
-    root_page_table[0] = pte_from_page_table(l1_page_table);
+    root_page_table = l2_page_table_1;
 
-    uint64_t* l0_page_table = allocate_page_table();
-    l1_page_table[5] = pte_from_page_table(l0_page_table);
+    uint64_t* l1_page_table_1 = allocate_page_table();
+    l2_page_table_1[0] = pte_from_page_table(l1_page_table_1);
 
-    l0_page_table[188] = pte_from_ppn(0xCAFE);
+    uint64_t* l0_page_table_1 = allocate_page_table();
+    l1_page_table_1[5] = pte_from_page_table(l0_page_table_1);
+
+    l0_page_table_1[188] = pte_from_ppn(0xCAFE);
 
     mmu(0xABCDEF);
 
